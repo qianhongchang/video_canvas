@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+            <canvas id="c" width="665" height="1000"/>
+    </div>
+    <script>
+        
+        var img = new Image();
+        img.src = "nba.jpg";
+
+        if(img.complete){
+            init()
+        } else {
+            img.onload = function(){
+                init()
+            }
+        }
+
+        function init(){
+            var canvas = document.getElementById('c');
+		    var context = canvas.getContext('2d');
+            context.drawImage(img,0,0,665,1000);
+            var imgData = context.getImageData(0, 0, 665, 1000);
+            var dotList = []
+
+            for(var x=0; x<imgData.width; x+=3) {
+                for(var y=0; y<imgData.height; y+=3) {
+                    var i = (y*imgData.width + x) * 4;
+                    if(imgData.data[i+3] > 128 && imgData.data[i] < 100){
+                        var dot = new Dot(x, y, 2);
+                        dotList.push(dot);
+                    }
+                }
+            }
+            draw(665,1000);
+
+            function Dot(centerX, centerY, radius) {  //这里是一个构造点阵的函数
+                this.x = centerX;
+                this.y = centerY;
+                this.radius = radius;
+            }
+
+
+            function draw(winWidth,winHeight){
+                var imgW = img.width,
+                    imgH = img.height,
+                    sx = winWidth/2-imgW/2,
+                    sy = winHeight/2-imgH/2;
+
+                context.clearRect(0, 0, winWidth, winHeight);//先清除整个画布
+
+                context.fillStyle = "#000";
+
+                for(var i=0; i<dotList.length; i+=1){
+                    curDot = dotList[i];
+                    context.save();
+                    context.beginPath();
+                    context.arc(sx+curDot.x, sy+curDot.y, curDot.radius, 0, 2*Math.PI);
+                    context.fill();
+                    context.restore();
+                }
+            }
+
+        }
+        
+    </script>
+</body>
+</html>

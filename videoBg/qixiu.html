@@ -1,0 +1,90 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <style>
+      body {
+        background: black;
+        color:#CCCCCC; 
+      }
+      div {
+        float: left;
+        border :1px solid #444444;
+        padding:10px;
+        margin: 10px;
+        background:#3B3B3B;
+      }
+      #video{
+          width: 400px;
+          height: 300px;
+      }
+    </style>
+    
+  </head>
+
+  <body onload="processor.doLoad()">
+    <div>
+      <video id="video"  src="qixiu.mp4" controls="true" loop/>
+    </div>
+    <div>
+      <canvas id="c1" width="400" height="300"/>
+      
+    </div>
+    <div style="position: absolute;left: 450px;top: 8px;background: rgba(0,0,0,0)">
+        <canvas id="c2" width="400" height="300"/>
+    </div>
+    <script type="text/javascript">
+        var processor ={
+          doLoad : function doLoad() {
+              this.video = document.getElementById('video');
+              this.c1 = document.getElementById('c1');
+              this.ctx1 = this.c1.getContext('2d');
+              this.c2 = document.getElementById('c2');
+              this.ctx2 = this.c2.getContext('2d');
+              let self = this;
+              this.video.addEventListener('play', function() {
+                  self.width = self.video.offsetWidth;
+                  self.height = self.video.offsetHeight;
+                  console.log(self.width,self.height)
+                  self.timerCallback();
+                  }, 
+              false);
+          },
+          timerCallback : function timerCallback() {
+              if (this.video.paused || this.video.ended) {
+                return;
+              }
+              this.computeFrame();
+              let self = this;
+              setTimeout(function() {
+                  self.timerCallback();
+              }, 0);
+          },
+          computeFrame : function computeFrame() {
+              this.ctx1.drawImage(this.video, 0, 0, this.width, this.height);
+              let frame = this.ctx1.getImageData(0, 0, this.width/2, this.height);//取横向一半
+              let l = frame.data.length / 4;
+          
+              for (let i = 0; i < l; i++) {
+                let r = frame.data[i * 4 + 0];
+                let g = frame.data[i * 4 + 1];
+                let b = frame.data[i * 4 + 2];
+                let brightness = (0.21*r + 0.72*g + 0.07*b);
+
+                // 置灰
+                frame.data[i * 4 + 0] = brightness
+                frame.data[i * 4 + 1] = brightness
+                frame.data[i * 4 + 2] = brightness
+                
+
+                // 调整明亮度和对比度  newValue = currentValue + 255 *（brightness / 
+                // frame.data[i * 4 + 0] = r + 255*(brightness/610);
+                // frame.data[i * 4 + 1] = g + 255*(brightness/610);
+                // frame.data[i * 4 + 2] = b + 255*(brightness/610);
+              }
+              this.ctx2.putImageData(frame, 0, 0);
+              return;
+          }
+        };
+    
+    </script>
+  </body>
+</html>

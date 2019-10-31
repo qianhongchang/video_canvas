@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+      <title>CPU</title>
+</head>
+<body>
+      <canvas id="canvas" width="1000"></canvas>
+      <script>
+            var data = [],t; 
+            var cpuTimer = setInterval(function(){ 
+                  t && data.push(Date.now()-t); 
+                  t = Date.now(); 
+                  drawHisto(data);
+            },500); 
+
+            // 画图
+            function drawHisto(data){ 
+                  var cvs = document.getElementById('canvas'); 
+                  ctx = cvs.getContext('2d'); 
+                  var width = cvs.width, 
+                  height = cvs.height, 
+                  histoWidth = width / 40; 
+
+                  // 重绘直方图 
+                  ctx.fillStyle = "#c00"; 
+                  ctx.fillRect(0,0,width,height); 
+                  ctx.beginPath(); 
+                  ctx.lineWidth = histoWidth/2; 
+                  ctx.strokeStyle = '#fff'; 
+                  for( var i = 0, len = data.length; i < len; i++){ 
+                        var x = i * histoWidth;
+                        // +5、/20、-10只是为了显示效果, 
+                        // ~~为数值取整相当于Math.floor() 
+                        y = ~~( (data[i] - 10 + 5) / 20 * (height-10) ); 
+                        ctx.moveTo( x+histoWidth/2, height ); 
+                        ctx.lineTo( x+histoWidth/2, height-y ); 
+                        ctx.stroke(); 
+                  } 
+            } 
+
+            
+      </script>
+</body>
+</html>

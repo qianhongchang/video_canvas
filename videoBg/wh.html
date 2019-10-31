@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #mycanvas{
+            border:1px solid #000;
+            /* width: 600px; */
+            /* height: 600px; */
+        }
+    </style>
+</head>
+<body>
+    <canvas id="mycanvas" width="300" height="300">
+            浏览器不支持Canvas,请升级或改用其它浏览器！
+        </canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById("mycanvas"),
+            ctx = canvas.getContext('2d');
+        ctx.moveTo(0,0);
+        ctx.lineTo(300,150);
+        ctx.stroke();
+    </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>使用JavaScript对浏览器判断</title>
+    <script src="Scripts/browser.js"></script>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div id="divInfo">
+        </div>
+        
+        <script type="text/javascript">
+        var browserInfo = function (userAgent) {
+            var u = userAgent || navigator.userAgent;
+            var self = this;
+            var match = {
+                //内核
+                'Trident': u.indexOf('Trident') > 0 || u.indexOf('NET CLR') > 0,
+                'Presto': u.indexOf('Presto') > 0,
+                'WebKit': u.indexOf('AppleWebKit') > 0,
+                'Gecko': u.indexOf('Gecko/') > 0,
+                //浏览器
+                'Safari': u.indexOf('Safari') > 0,
+                'Chrome': u.indexOf('Chrome') > 0 || u.indexOf('CriOS') > 0,
+                'IE': u.indexOf('MSIE') > 0 || u.indexOf('Trident') > 0,
+                'Edge': u.indexOf('Edge') > 0,
+                'Firefox': u.indexOf('Firefox') > 0,
+                'Opera': u.indexOf('Opera') > 0 || u.indexOf('OPR') > 0,
+                'Vivaldi': u.indexOf('Vivaldi') > 0,
+                'UC': u.indexOf('UC') > 0 || u.indexOf(' UBrowser') > 0,
+                'QQBrowser': u.indexOf('QQBrowser') > 0,
+                'QQ': u.indexOf('QQ/') > 0,
+                'Baidu': u.indexOf('Baidu') > 0 || u.indexOf('BIDUBrowser') > 0,
+                'Maxthon': u.indexOf('Maxthon') > 0,
+                'LBBROWSER': u.indexOf('LBBROWSER') > 0,
+                '2345Explorer': u.indexOf('2345Explorer') > 0,
+                'Sogou': u.indexOf('MetaSr') > 0 || u.indexOf('Sogou') > 0,
+                'Wechat': u.indexOf('MicroMessenger') > 0,
+                'Taobao': u.indexOf('AliApp(TB') > 0,
+                'Alipay': u.indexOf('AliApp(AP') > 0,
+                'Weibo': u.indexOf('Weibo') > 0,
+                'Suning': u.indexOf('SNEBUY-APP') > 0,
+                'iQiYi': u.indexOf('IqiyiApp') > 0
+            };
+            //基本信息
+            var hash = {
+                engine: ['WebKit', 'Trident', 'Gecko', 'Presto'],
+                browser: ['Safari', 'Chrome', 'IE', 'Edge', 'Firefox', 'Opera', 'Vivaldi', 'UC', 'QQBrowser', 'QQ', 'Baidu', 'Maxthon', 'Sogou', 'LBBROWSER', '2345Explorer', 'Wechat', 'Taobao', 'Alipay', 'Weibo', 'Suning', 'iQiYi']
+            };
+            for (var s in hash) {
+                for (var i = 0; i < hash[s].length; i++) {
+                    var value = hash[s][i];
+                    if (match[value]) {
+                        self[s] = value;
+                    }
+                }
+            }
+            //浏览器版本信息
+            var version = {
+                'Chrome': function () {
+                    return u.replace(/^.*Chrome\/([\d.]+).*$/, '$1');
+                },
+                'IE': function () {
+                    var v = u.replace(/^.*MSIE ([\d.]+).*$/, '$1');
+                    if (v == u) {
+                        v = u.replace(/^.*rv:([\d.]+).*$/, '$1');
+                    }
+                    return v != u ? v : '';
+                },
+                'Edge': function () {
+                    return u.replace(/^.*Edge\/([\d.]+).*$/, '$1');
+                },
+                'Firefox': function () {
+                    return u.replace(/^.*Firefox\/([\d.]+).*$/, '$1');
+                },
+                'Safari': function () {
+                    return u.replace(/^.*Version\/([\d.]+).*$/, '$1');
+                },
+                'Opera': function () {
+                    return u.replace(/^.*Opera\/([\d.]+).*$/, '$1');
+                },
+                'Vivaldi': function () {
+                    return u.replace(/^.*Vivaldi\/([\d.]+).*$/, '$1');
+                },
+                'Maxthon': function () {
+                    return u.replace(/^.*Maxthon\/([\d.]+).*$/, '$1');
+                },
+                'QQBrowser': function () {
+                    return u.replace(/^.*QQBrowser\/([\d.]+).*$/, '$1');
+                },
+                'QQ': function () {
+                    return u.replace(/^.*QQ\/([\d.]+).*$/, '$1');
+                },
+                'Baidu': function () {
+                    return u.replace(/^.*BIDUBrowser[\s\/]([\d.]+).*$/, '$1');
+                },
+                'UC': function () {
+                    return u.replace(/^.*UC?Browser\/([\d.]+).*$/, '$1');
+                },
+                '2345Explorer': function () {
+                    return u.replace(/^.*2345Explorer\/([\d.]+).*$/, '$1');
+                },
+                'Wechat': function () {
+                    return u.replace(/^.*MicroMessenger\/([\d.]+).*$/, '$1');
+                },
+                'Taobao': function () {
+                    return u.replace(/^.*AliApp\(TB\/([\d.]+).*$/, '$1');
+                },
+                'Alipay': function () {
+                    return u.replace(/^.*AliApp\(AP\/([\d.]+).*$/, '$1');
+                },
+                'Weibo': function () {
+                    return u.replace(/^.*weibo__([\d.]+).*$/, '$1');
+                },
+                'Suning': function () {
+                    return u.replace(/^.*SNEBUY-APP([\d.]+).*$/, '$1');
+                },
+                'iQiYi': function () {
+                    return u.replace(/^.*IqiyiVersion\/([\d.]+).*$/, '$1');
+                }
+            };
+            self.version = '';
+            if (version[self.browser]) {
+                self.version = version[self.browser]();
+            }
+        };
+            var browserInfo = new browserInfo();
+            var html = "<caption><p>" + navigator.userAgent + "</p></caption><table>"
+                         + "<thead><tr>"
+                         + "<th>浏览器</th>"
+                        + "<th>版本</th>"
+                        + "<th>内核</th>"
+                        + "</tr></thead>"
+                        + "<tr>"
+                        + "<td>" + browserInfo.browser + "</td>"
+                        + "<td>" + browserInfo.version + "</td>"
+                        + "<td>" + browserInfo.engine + "</td>"
+                        + "</tr></table>";
+            document.getElementById("divInfo").outerHTML = html;
+        </script>
+    </form>
+</body>
+</html>

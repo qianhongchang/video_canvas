@@ -1,0 +1,85 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <style>
+      body {
+        background: black;
+        color:#CCCCCC; 
+      }
+      #c2 {
+        background-image: url("nba.jpg");
+        background-repeat: no-repeat;
+        background-size: 146%;
+        background-position: -91px -53px;
+      }
+      div {
+        float: left;
+        border :1px solid #444444;
+        padding:10px;
+        margin: 10px;
+        background:#3B3B3B;
+      }
+    </style>
+    
+  </head>
+
+  <body onload="processor.doLoad()">
+    <div>
+      <video id="video" src="video.ogv" controls="true" loop/>
+    </div>
+    <div>
+      <canvas id="c1" width="320" height="192"/>
+      
+    </div>
+    <div>
+        <canvas id="c2" width="320" height="192"/>
+    </div>
+    <script type="text/javascript">
+        var processor ={
+          doLoad : function doLoad() {
+              this.video = document.getElementById('video');
+              this.c1 = document.getElementById('c1');
+              this.ctx1 = this.c1.getContext('2d');
+              this.c2 = document.getElementById('c2');
+              this.ctx2 = this.c2.getContext('2d');
+              let self = this;
+              this.video.addEventListener('play', function() {
+                  self.width = self.video.videoWidth;
+                  self.height = self.video.videoHeight;
+                  self.timerCallback();
+                  }, 
+              false);
+          },
+          timerCallback : function timerCallback() {
+              if (this.video.paused || this.video.ended) {
+                return;
+              }
+              this.computeFrame();
+              let self = this;
+              setTimeout(function() {
+                  self.timerCallback();
+              }, 0);
+          },
+          computeFrame : function computeFrame() {
+              this.ctx1.drawImage(this.video, 0, 0, this.width, this.height);//画视频
+              let frame = this.ctx1.getImageData(0, 0, this.width, this.height);//抓取屏幕上的点
+              console.log(frame)
+              let l = frame.data.length / 4;
+              for (let i = 0; i < l; i++) {
+                let r = frame.data[i * 4 + 0];
+                let g = frame.data[i * 4 + 1];
+                let b = frame.data[i * 4 + 2];
+                // frame.data[i * 4 + 0] = 255 - r;
+                // frame.data[i * 4 + 1] = 255 - g;
+                // frame.data[i * 4 + 2] = 255 - b;
+                if (g > 100 && r > 100 && b < 43)  frame.data[i * 4 + 3] = 0
+              }
+              this.ctx2.putImageData(frame, 0, 0);
+              return;
+          }
+        };
+    
+
+    
+    </script>
+  </body>
+</html>
